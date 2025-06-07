@@ -1,28 +1,36 @@
 campaigns:
-  - name: "2024年6月渋谷駅チラシ"
-    location: "渋谷駅"
-    start_date: "2024-06-10"
-    end_date: "2024-06-30"
-    budget: 50000
-    target_url: "https://example.com/stress-check"
-    
-  - name: "2024年6月新宿駅チラシ"
-    location: "新宿駅"
-    start_date: "2024-06-10"
-    end_date: "2024-06-30"
-    budget: 30000
-    target_url: "https://example.com/stress-check"
-    
-  - name: "2024年7月品川駅ポスター"
-    location: "品川駅"
-    start_date: "2024-07-01"
-    end_date: "2024-07-31"
-    budget: 80000
-    target_url: "https://example.com/health-consultation"
-    
-  - name: "2024年7月横浜駅チラシ"
-    location: "横浜駅"
-    start_date: "2024-07-15"
-    end_date: "2024-08-15"
-    budget: 45000
-    target_url: "https://example.com/health-consultation"
+  - name: "2025年7月SCSチラシiOS"
+    location: "仙台"
+    start_date: "2025-07-26"
+    end_date: "2025-07-27"
+    budget: 22000
+    target_url: "https://suiminkansoku.com/app-ios"  # リダイレクトページ
+
+  - name: "2025年7月SCSチラシAndroid"
+    location: "仙台"
+    start_date: "2025-07-26"
+    end_date: "2025-07-27"
+    budget: 22000
+    target_url: "https://suiminkansoku.com/app-android"  # リダイレクトページ
+
+# コンバージョンイベント設定（オプション）
+# 以下のイベントが自動的にGA4に作成されます
+conversion_events:
+  - event_name: "app_store_click"
+    description: "App Storeへのクリック（iOS）"
+
+  - event_name: "google_play_click"
+    description: "Google Playへのクリック（Android）"
+
+  - event_name: "qr_code_scan"
+    description: "QRコードからの訪問"
+
+  - event_name: "flyer_campaign_visit"
+    description: "チラシキャンペーンからの訪問"
+
+  # カスタムイベントの例（必要に応じて追加）
+  # - event_name: "sign_up_complete"
+  #   description: "会員登録完了"
+  # - event_name: "first_purchase"
+  #   description: "初回購入"
+

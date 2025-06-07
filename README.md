@@ -7,8 +7,12 @@
 - 📱 UTMパラメータ付きQRコードの自動生成
 - 🎯 日本語でわかりやすいキャンペーン管理
 - 📊 GA4のカスタムディメンション自動設定
+- 🎯 カスタマイズ可能なコンバージョンイベント
+- 🔧 拡張計測機能の自動有効化
+- 📅 データ保持期間の自動設定（14ヶ月）
 - 📈 日次・期間レポートの自動生成
 - 💰 CPA（獲得単価）の自動計算
+- 🏷️ GTM連携用の設定ヘルパー生成
 
 ## 必要な環境
 
@@ -57,7 +61,54 @@ pip install -r requirements.txt
 
 ### 5. キャンペーン設定
 
-`campaigns.yml`でキャンペーンを定義（サンプルは既に用意されています）
+`campaigns.yml`でキャンペーンとコンバージョンイベントを定義：
+
+```yaml
+# キャンペーン設定
+campaigns:
+  - name: "2025年7月SCSチラシiOS"
+    location: "仙台"
+    start_date: "2025-07-26"
+    end_date: "2025-07-27"
+    budget: 22000
+    target_url: "https://apps.apple.com/jp/app/id1550542928"
+
+# カスタムコンバージョンイベント（オプション）
+conversion_events:
+  - event_name: "app_store_click"
+    description: "App Storeへのクリック"
+  - event_name: "qr_code_scan"
+    description: "QRコードからの訪問"
+```
+
+#### 様々な用途に対応可能
+
+**アプリダウンロード促進の場合：**
+```yaml
+conversion_events:
+  - event_name: "app_store_click"
+    description: "App Storeへのクリック"
+  - event_name: "google_play_click"
+    description: "Google Playへのクリック"
+```
+
+**ECサイトの場合：**
+```yaml
+conversion_events:
+  - event_name: "add_to_cart"
+    description: "カートに追加"
+  - event_name: "purchase"
+    description: "購入完了"
+```
+
+**資料請求・問い合わせの場合：**
+```yaml
+conversion_events:
+  - event_name: "form_submit"
+    description: "資料請求フォーム送信"
+  - event_name: "download_brochure"
+    description: "パンフレットダウンロード"
+```
 
 ## 使い方
 
@@ -76,7 +127,13 @@ python src/main.py generate-qr
 ```bash
 python src/main.py configure-ga4
 ```
-カスタムディメンションが自動的に作成されます。
+
+以下が自動的に設定されます：
+- ✅ カスタムディメンション（UTMパラメータ、キャンペーン情報）
+- ✅ コンバージョンイベント（campaigns.ymlで定義したもの）
+- ✅ 拡張計測機能の有効化
+- ✅ データ保持期間を14ヶ月に設定
+- ✅ GTM設定ヘルパーの生成
 
 ### レポート生成
 
@@ -140,13 +197,45 @@ ga4-campaign-automation/
 - **CPA**: 1コンバージョンあたりのコスト
 - **セッション単価**: 1訪問あたりのコスト
 
+## 設定の詳細
+
+### 自動設定される項目
+
+#### カスタムディメンション
+- `campaign_id` - キャンペーンID
+- `campaign_name` - キャンペーン名（日本語）
+- `campaign_location` - 配布場所
+- `print_medium` - 印刷媒体タイプ
+- `utm_source` - UTMソース
+- `utm_medium` - UTMメディア
+- `utm_campaign` - UTMキャンペーン
+- `utm_content` - UTMコンテンツ
+- `utm_term` - UTMキーワード
+
+#### GTM設定ヘルパー
+`output/reports/gtm_setup_helper.json`に以下の情報が生成されます：
+- UTMパラメータのマッピング設定
+- GA4設定タグの例
+- 推奨トリガーの設定
+
 ## トラブルシューティング
 
 ### 認証エラーが発生する場合
 
-1. `config/credentials.json`が正しく配置されているか確認
-2. サービスアカウントにGA4プロパティへのアクセス権限があるか確認
-3. 必要なAPIが有効化されているか確認
+1. **権限エラーの場合**
+   ```bash
+   python scripts/setup_permissions.py
+   ```
+   表示されるサービスアカウントのメールアドレスをGA4に追加（編集者権限）
+
+2. **APIが有効化されていない場合**
+   - Google Analytics Data API
+   - Google Analytics Admin API
+   を[Google Cloud Console](https://console.cloud.google.com/)で有効化
+
+3. **認証ファイルの確認**
+   - `config/credentials.json`が正しく配置されているか確認
+   - サービスアカウントの認証キーが有効か確認
 
 ### データが取得できない場合
 
@@ -160,11 +249,32 @@ ga4-campaign-automation/
 2. 印刷品質が十分か確認
 3. URLが長すぎる場合は短縮URLの使用を検討
 
+## 更新履歴
+
+### v1.1.0 (2025-01-07)
+- ✨ コンバージョンイベントのカスタマイズ機能追加
+- ✨ 拡張計測機能の自動有効化
+- ✨ データ保持期間の自動設定（14ヶ月）
+- ✨ GTM設定ヘルパーの生成機能
+- 🐛 Google Analytics Admin API v1alphaとの互換性修正
+- 📝 権限設定ヘルパースクリプト追加
+
+### v1.0.0 (2025-01-06)
+- 🎉 初回リリース
+- QRコード生成機能
+- GA4カスタムディメンション自動設定
+- レポート生成機能
+
 ## 注意事項
 
 - GA4のデータ反映には24-48時間かかる場合があります
-- カスタムディメンションは最大125個まで作成可能です
+- カスタムディメンションは最大50個まで作成可能です（GA4の制限）
+- コンバージョンイベントは最大30個まで作成可能です（GA4の制限）
 - レポートデータの精度は、GA4の設定とトラッキング実装に依存します
+
+## 貢献
+
+プルリクエストを歓迎します！バグ報告や機能要望は[Issues](https://github.com/GIZIN/ga4-campaign-automation/issues)へ。
 
 ## ライセンス
 

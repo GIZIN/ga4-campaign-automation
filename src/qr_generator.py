@@ -71,7 +71,7 @@ class QRCodeGenerator:
         return utm_url, campaign_id
         
     def create_qr_with_label(self, url, campaign_name, campaign_id, location):
-        """ラベル付きQRコードを生成"""
+        """シンプルなQRコードを生成（ラベルなし）"""
         # QRコード生成
         qr = qrcode.QRCode(
             version=None,
@@ -82,60 +82,10 @@ class QRCodeGenerator:
         qr.add_data(url)
         qr.make(fit=True)
         
-        # QRコード画像を作成
+        # QRコード画像を作成して返す（ラベルなし）
         qr_img = qr.make_image(fill_color="black", back_color="white")
         
-        # キャンバスサイズを計算（QRコード + ラベルスペース）
-        qr_width, qr_height = qr_img.size
-        label_height = 120
-        canvas_width = qr_width
-        canvas_height = qr_height + label_height
-        
-        # 新しいキャンバスを作成
-        canvas = Image.new('RGB', (canvas_width, canvas_height), 'white')
-        
-        # QRコードを貼り付け
-        canvas.paste(qr_img, (0, 0))
-        
-        # テキストを描画
-        draw = ImageDraw.Draw(canvas)
-        
-        # フォントサイズの設定（システムフォントを使用）
-        try:
-            # 日本語フォントを試す
-            font_large = ImageFont.truetype('/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc', 24)
-            font_small = ImageFont.truetype('/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc', 16)
-        except:
-            # フォールバック
-            font_large = ImageFont.load_default()
-            font_small = ImageFont.load_default()
-            
-        # テキストを中央揃えで描画
-        text_y = qr_height + 10
-        
-        # キャンペーン名
-        bbox = draw.textbbox((0, 0), campaign_name, font=font_large)
-        text_width = bbox[2] - bbox[0]
-        draw.text(((canvas_width - text_width) // 2, text_y), 
-                 campaign_name, fill='black', font=font_large)
-        
-        # 場所
-        text_y += 35
-        location_text = f"配布場所: {location}"
-        bbox = draw.textbbox((0, 0), location_text, font=font_small)
-        text_width = bbox[2] - bbox[0]
-        draw.text(((canvas_width - text_width) // 2, text_y), 
-                 location_text, fill='gray', font=font_small)
-        
-        # キャンペーンID
-        text_y += 25
-        id_text = f"ID: {campaign_id}"
-        bbox = draw.textbbox((0, 0), id_text, font=font_small)
-        text_width = bbox[2] - bbox[0]
-        draw.text(((canvas_width - text_width) // 2, text_y), 
-                 id_text, fill='gray', font=font_small)
-        
-        return canvas
+        return qr_img
         
     def generate_all(self):
         """すべてのキャンペーンのQRコードを生成"""
