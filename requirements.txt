@@ -1,0 +1,11 @@
+google-analytics-admin==0.22.7
+google-analytics-data==0.18.9
+google-auth==2.32.0
+google-auth-oauthlib==1.2.1
+qrcode[pil]==7.4.2
+pyyaml==6.0.1
+pandas==2.2.2
+Pillow==10.4.0
+click==8.1.7
+python-dateutil==2.9.0
+requests==2.32.3
